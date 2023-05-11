@@ -134,5 +134,5 @@ int main() {meminfo();
     std::cout << bold(yellow(getSymbol("  ", "kernel "))) << kernel << std::endl;
     std::cout << bold(green(getSymbol("  ", "uptime "))) << uptime << std::endl;
     std::cout << bold(cyan(getSymbol("  ", "shell  "))) << shell << std::endl;
-    std::cout << bold(magenta(getSymbol("  ", "ram  "))) << getMemory() << std::endl;
+    std::cout << bold(magenta(getSymbol("  ", "ram    "))) << getMemory() << std::endl;
 }

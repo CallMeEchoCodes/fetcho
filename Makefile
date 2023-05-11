@@ -1,4 +1,4 @@
-EXEC = quickfetch
+EXEC = fetcho
 
 BUILD_DIR = build
 BIN_DIR = $(BUILD_DIR)/bin
