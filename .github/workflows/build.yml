@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: sudo apt -y install build-essential libprocps-dev
+
+    - name: Make fetcho
+      run: make RELEASE=1 clean build
+
+    - name: Upload binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: fetcho
+        path: build/release/bin/fetcho
