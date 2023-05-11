@@ -19,7 +19,7 @@
 #define magenta(str) (std::string("\e[95m") + str + "\e[0m")
 
 std::string getSymbol(std::string symbol, std::string altText) {
-    std::string nerdFontEnvVar = getenv("QF_NERDFONTS") ? getenv("QF_NERDFONTS") : "";
+    std::string nerdFontEnvVar = getenv("FO_NERDFONTS") ? getenv("FO_NERDFONTS") : "";
     std::string term = getenv("TERM") ? getenv("TERM") : "";
     bool shouldUseNerdFonts;
     if (nerdFontEnvVar == "true" || nerdFontEnvVar == "1") { shouldUseNerdFonts = true; } else { shouldUseNerdFonts = false; }
@@ -102,7 +102,7 @@ std::string getMemory() {
 
 std::string makeLine(std::string text) {
     std::string line = "";
-    char* lineTextEnvVar = getenv("QF_LINETEXT");
+    char* lineTextEnvVar = getenv("FO_LINETEXT");
     std::string lineText = lineTextEnvVar ? std::string(lineTextEnvVar) : "─";
 
     for (unsigned int i = 0; i < text.length(); i++) {
