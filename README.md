@@ -38,8 +38,6 @@ git checkout "$(git describe --tags --abbrev=0)" # checkout to latest tag, omit 
 sudo make install RELEASE=1
 ```
 
-Specify `INSTALL_DIR` in `make install` to specify where to install to, read `Makefile` for more information
-
 ## Acknowledgments
 * [mekb-turtle](https://github.com/mekb-turtle) for helping me with C stuff I didn't understand
 * [angelofallars](https://github.com/angelofallars) for creating treefetch, which inspired the design of fetcho (mainly the seperator)
