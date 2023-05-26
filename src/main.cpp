@@ -17,6 +17,7 @@
 #define yellow(str) (std::string("\e[93m") + str + "\e[0m")
 #define green(str) (std::string("\e[92m") + str + "\e[0m")
 #define cyan(str) (std::string("\e[96m") + str + "\e[0m")
+#define blue(str) (std::string("\e[34m") + str + "\e[0m")
 #define magenta(str) (std::string("\e[95m") + str + "\e[0m")
 
 std::string getSymbol(std::string symbol, std::string altText) {
@@ -71,6 +72,19 @@ std::string getShell(passwd* pw) {
     shell.erase(0, shell.rfind('/') + 1);
     return shell;
 }
+
+std::string getDesktopEnvironment() {
+    std::string xdgCurrentDesktop = std::getenv("XDG_CURRENT_DESKTOP");
+    std::string desktopSession = std::getenv("DESKTOP_SESSION");
+    
+    if (!xdgCurrentDesktop.empty()) {
+        return xdgCurrentDesktop;
+    } else if (!desktopSession.empty()) {
+        return desktopSession;
+    } else {
+        return "Unknown";
+    }
+} 
 
 std::string getMemory() {
     meminfo();
@@ -166,6 +180,7 @@ int main() {
     std::string kernel = std::string(un.sysname) + " " + std::string(un.release);
     std::string uptime = getUptime(sysInfo);
     std::string shell = getShell(pw);
+    std::string de = getDesktopEnvironment();
 
     std::string userInfo = bold(magenta(username)) + bold(green("@")) + bold(magenta(hostname));
     std::cout << userInfo << std::endl;
@@ -174,5 +189,6 @@ int main() {
     std::cout << bold(yellow(getSymbol("  ", "kernel "))) << kernel << std::endl;
     std::cout << bold(green(getSymbol("  ", "uptime "))) << uptime << std::endl;
     std::cout << bold(cyan(getSymbol("  ", "shell  "))) << shell << std::endl;
-    std::cout << bold(magenta(getSymbol("  ", "ram    "))) << getMemory() << std::endl;
+    std::cout << bold(blue(getSymbol("  ", "ram    "))) << getMemory() << std::endl;
+    std::cout << bold(magenta(getSymbol("  ", "de     "))) << de << std::endl;
 }
