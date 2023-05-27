@@ -74,9 +74,11 @@ std::string getShell(passwd* pw) {
 }
 
 std::string getDesktopEnvironment() {
-    std::string xdgCurrentDesktop = std::getenv("XDG_CURRENT_DESKTOP");
-    std::string desktopSession = std::getenv("DESKTOP_SESSION");
-    
+    std::string xdgCurrentDesktop
+        = std::getenv("XDG_CURRENT_DESKTOP") ? std::getenv("XDG_CURRENT_DESKTOP") : "";
+    std::string desktopSession
+        = std::getenv("DESKTOP_SESSION") ? std::getenv("DESKTOP_SESSION") : "";
+
     if (!xdgCurrentDesktop.empty()) {
         return xdgCurrentDesktop;
     } else if (!desktopSession.empty()) {
@@ -84,7 +86,7 @@ std::string getDesktopEnvironment() {
     } else {
         return "Unknown";
     }
-} 
+}
 
 std::string getMemory() {
     meminfo();
