@@ -38,6 +38,54 @@ git checkout "$(git describe --tags --abbrev=0)" # checkout to latest tag, omit 
 sudo make install RELEASE=1
 ```
 
+## Customizing
+Fetcho is customized using environment variables.
+These can be set by adding a line like this to your shells configuration file (eg. .bashrc, .zshrc, config.fish):
+```bash
+export VARIABLE_NAME="variable value"
+```
+
+### `FO_MODULES`
+`FO_MODULES` defines the modules that should be shown.
+It is a string that contains a list of modules seperated by a space. The modules will be shown from first to last in the variable.
+
+**Valid modules**:
+
+`os`
+
+`kernel`
+
+`uptime`
+
+`shell`
+
+`ram`
+
+`de`
+
+**Default**:
+```bash
+export FO_MODULES="os kernel uptime shell ram de"
+```
+
+### `FO_NERDFONTS`
+`FO_NERDFONTS` is used to decide if icons should be shown. If it is set to either `"true"` or `"1"` then icons will be shown. Icons are automatically disabled if you are in a TTY regardless of what this variable is set to.
+
+**Default**:
+```bash
+export FO_NERDFONTS="false"
+```
+
+### `FO_LINETEXT`
+`FO_LINETEXT` is the character used for the seperator line between the `username@hostname` and the modules. Make sure it is only 1 character or strange behavior can occur.
+
+**Default**:
+```bash
+export FO_LINETEXT="─"
+```
+
+
+
 ## Acknowledgments
 * [mekb-turtle](https://github.com/mekb-turtle) for helping me with C stuff I didn't understand
 * [angelofallars](https://github.com/angelofallars) for creating treefetch, which inspired the design of fetcho (mainly the seperator)
