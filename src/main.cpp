@@ -10,6 +10,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #define bold(str) (std::string("\e[1m") + str + "\e[22m")
 
@@ -74,10 +75,8 @@ std::string getShell(passwd* pw) {
 }
 
 std::string getDesktopEnvironment() {
-    std::string xdgCurrentDesktop
-        = std::getenv("XDG_CURRENT_DESKTOP") ? std::getenv("XDG_CURRENT_DESKTOP") : "";
-    std::string desktopSession
-        = std::getenv("DESKTOP_SESSION") ? std::getenv("DESKTOP_SESSION") : "";
+    std::string xdgCurrentDesktop = std::getenv("XDG_CURRENT_DESKTOP") ? std::getenv("XDG_CURRENT_DESKTOP") : "";
+    std::string desktopSession = std::getenv("DESKTOP_SESSION") ? std::getenv("DESKTOP_SESSION") : "";
 
     if (!xdgCurrentDesktop.empty()) {
         return xdgCurrentDesktop;
@@ -149,9 +148,7 @@ std::string getMemory() {
     }
 
     std::ostringstream stringStream;
-    stringStream << std::fixed << std::setprecision(usedDecimalPlaces) << finalUsedNumber
-                 << usedSuffix << " / " << std::setprecision(totalDecimalPlaces) << finalTotalNumber
-                 << totalSuffix;
+    stringStream << std::fixed << std::setprecision(usedDecimalPlaces) << finalUsedNumber << usedSuffix << " / " << std::setprecision(totalDecimalPlaces) << finalTotalNumber << totalSuffix;
     return stringStream.str();
 }
 
@@ -166,6 +163,23 @@ std::string makeLine(std::string text) {
     return line;
 }
 
+std::vector<std::string> getOptions() {
+    char* modulesEnvVar = getenv("FO_MODULES");
+    std::string modulesString = modulesEnvVar ? std::string(modulesEnvVar) : "os kernel uptime shell ram de";
+
+    std::stringstream stream;
+    stream << modulesString;
+
+    std::vector<std::string> optionsVector;
+    std::string currentLine;
+
+    while (std::getline(stream, currentLine, ' ')) {
+        optionsVector.push_back(currentLine);
+    }
+
+    return optionsVector;
+}
+
 int main() {
     meminfo();
     struct utsname un;
@@ -173,24 +187,36 @@ int main() {
 
     passwd* pw = getpwuid(geteuid());
 
-    struct sysinfo sysInfo;
-    sysinfo(&sysInfo);
+    std::vector<std::string> optionsVector = getOptions();
 
     std::string hostname = un.nodename;
     std::string username = pw->pw_name;
-    std::string distro = getDistro();
-    std::string kernel = std::string(un.sysname) + " " + std::string(un.release);
-    std::string uptime = getUptime(sysInfo);
-    std::string shell = getShell(pw);
-    std::string de = getDesktopEnvironment();
-
     std::string userInfo = bold(magenta(username)) + bold(green("@")) + bold(magenta(hostname));
     std::cout << userInfo << std::endl;
     std::cout << bold(makeLine(username + "@" + hostname)) << std::endl;
-    std::cout << bold(red(getSymbol("  ", "os     "))) << distro << std::endl;
-    std::cout << bold(yellow(getSymbol("  ", "kernel "))) << kernel << std::endl;
-    std::cout << bold(green(getSymbol("  ", "uptime "))) << uptime << std::endl;
-    std::cout << bold(cyan(getSymbol("  ", "shell  "))) << shell << std::endl;
-    std::cout << bold(blue(getSymbol("  ", "ram    "))) << getMemory() << std::endl;
-    std::cout << bold(magenta(getSymbol("  ", "de     "))) << de << std::endl;
+
+    for (long unsigned int i = 0; i < optionsVector.size(); i++) {
+        std::string currentString = optionsVector[i];
+
+        if (currentString == "os") {
+            std::cout << bold(red(getSymbol("  ", "os     "))) << getDistro() << std::endl;
+        } else if (currentString == "kernel") {
+            std::cout << bold(yellow(getSymbol("  ", "kernel "))) << std::string(un.sysname) + " " + std::string(un.release) << std::endl;
+        } else if (currentString == "uptime") {
+            struct sysinfo sysInfo;
+            sysinfo(&sysInfo);
+            std::cout << bold(green(getSymbol("  ", "uptime "))) << getUptime(sysInfo) << std::endl;
+        } else if (currentString == "shell") {
+            std::cout << bold(cyan(getSymbol("  ", "shell  "))) << getShell(pw) << std::endl;
+        } else if (currentString == "ram") {
+            std::cout << bold(blue(getSymbol("  ", "ram    "))) << getMemory() << std::endl;
+        } else if (currentString == "de") {
+            std::cout << bold(magenta(getSymbol("  ", "de     "))) << getDesktopEnvironment() << std::endl;
+        } else {
+            std::cerr << red("\"") << red(currentString) << red("\"") << red(" is not a valid module!") << std::endl;
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
 }
