@@ -183,7 +183,6 @@ std::vector<std::string> getOptions() {
 }
 
 int main() {
-    meminfo();
     struct utsname un;
     uname(&un);
 
