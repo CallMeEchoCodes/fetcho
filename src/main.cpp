@@ -167,15 +167,17 @@ std::string makeLine(std::string text) {
 
 std::vector<std::string> getOptions() {
     char* modulesEnvVar = getenv("FO_MODULES");
-    std::string modulesString = modulesEnvVar ? std::string(modulesEnvVar) : "os kernel uptime shell ram de";
+
+    if (!modulesEnvVar) return {"os", "kernel", "uptime", "shell", "ram", "de"};
 
     std::stringstream stream;
-    stream << modulesString;
+    stream << modulesEnvVar;
 
     std::vector<std::string> optionsVector;
     std::string currentLine;
 
     while (std::getline(stream, currentLine, ' ')) {
+        std::cout << currentLine << std::endl;
         optionsVector.push_back(currentLine);
     }
 
