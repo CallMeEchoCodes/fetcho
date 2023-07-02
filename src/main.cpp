@@ -77,11 +77,14 @@ std::string getShell(passwd* pw) {
 std::string getDesktopEnvironment() {
     std::string xdgCurrentDesktop = std::getenv("XDG_CURRENT_DESKTOP") ? std::getenv("XDG_CURRENT_DESKTOP") : "";
     std::string desktopSession = std::getenv("DESKTOP_SESSION") ? std::getenv("DESKTOP_SESSION") : "";
+    std::string term = getenv("TERM") ? getenv("TERM") : "";
 
     if (!xdgCurrentDesktop.empty()) {
         return xdgCurrentDesktop;
     } else if (!desktopSession.empty()) {
         return desktopSession;
+    } else if (term == "linux") {
+        return "None";
     } else {
         return "Unknown";
     }
@@ -94,8 +97,7 @@ std::string getMemory() {
     double totalMemMebibytes = totalMemKibibytes / 1024;
 
     // This should be 1024. But when i do that it outputs the incorrect value.
-    // Maybe im just stupid but if someone can explain why this outputs the correct number of
-    // GIBIBytes then lmk
+    // Maybe im just stupid but if someone can explain why this outputs the correct number of GIBIBytes then lmk
     double totalMemGibibytes = totalMemMebibytes / 1000;
 
     std::string totalSuffix;
