@@ -61,8 +61,8 @@ std::string getDistro() {
     return distro;
 }
 
-std::string getUptime(struct sysinfo* sysInfo) {
-    unsigned int uptime = sysInfo->uptime;
+std::string getUptime(struct sysinfo sysInfo) {
+    unsigned int uptime = sysInfo.uptime;
     if (uptime < 60) return std::to_string(uptime) + "s";
     if (uptime / 3600 == 0) return std::to_string(uptime % 3600 / 60) + "m";
     return std::to_string(uptime / 3600) + "h " + std::to_string(uptime % 3600 / 60) + "m";
@@ -201,8 +201,8 @@ int main() {
         } else if (currentString == "kernel") {
             std::cout << bold(yellow(getSymbol("  ", "kernel "))) << std::string(un.sysname) + " " + std::string(un.release) << std::endl;
         } else if (currentString == "uptime") {
-            struct sysinfo* sysInfo;
-            sysinfo(sysInfo);
+            struct sysinfo sysInfo;
+            sysinfo(&sysInfo);
             std::cout << bold(green(getSymbol("  ", "uptime "))) << getUptime(sysInfo) << std::endl;
         } else if (currentString == "shell") {
             std::cout << bold(cyan(getSymbol("  ", "shell  "))) << getShell(pw) << std::endl;
