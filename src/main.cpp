@@ -173,7 +173,6 @@ std::vector<std::string> getOptions() {
     std::string currentLine;
 
     while (std::getline(stream, currentLine, ' ')) {
-        std::cout << currentLine << std::endl;
         optionsVector.push_back(currentLine);
     }
 
