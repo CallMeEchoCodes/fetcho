@@ -61,8 +61,8 @@ std::string getDistro() {
     return distro;
 }
 
-std::string getUptime(struct sysinfo sysInfo) {
-    unsigned int uptime = sysInfo.uptime;
+std::string getUptime(struct sysinfo* sysInfo) {
+    unsigned int uptime = sysInfo->uptime;
     if (uptime < 60) return std::to_string(uptime) + "s";
     if (uptime / 3600 == 0) return std::to_string(uptime % 3600 / 60) + "m";
     return std::to_string(uptime / 3600) + "h " + std::to_string(uptime % 3600 / 60) + "m";
@@ -92,9 +92,7 @@ std::string getDesktopEnvironment() {
 
 std::string getMemory() {
     meminfo();
-    unsigned long totalMemKibibytes = kb_main_total;
-    double totalMemBytes = totalMemKibibytes * 1024;
-    double totalMemMebibytes = totalMemKibibytes / 1024;
+    double totalMemMebibytes = kb_main_total / 1024;
 
     // This should be 1024. But when i do that it outputs the incorrect value.
     // Maybe im just stupid but if someone can explain why this outputs the correct number of GIBIBytes then lmk
@@ -104,13 +102,13 @@ std::string getMemory() {
     int totalDecimalPlaces;
     double finalTotalNumber;
 
-    if (totalMemKibibytes == 0) {
+    if (kb_main_total == 0) {
         totalSuffix = "B";
-        finalTotalNumber = totalMemBytes;
+        finalTotalNumber = kb_main_total * 1024;
         totalDecimalPlaces = 0;
     } else if (totalMemMebibytes == 0) {
         totalSuffix = "K";
-        finalTotalNumber = totalMemKibibytes;
+        finalTotalNumber = kb_main_total;
         totalDecimalPlaces = 0;
     } else if (totalMemGibibytes == 0) {
         totalSuffix = "M";
@@ -122,22 +120,20 @@ std::string getMemory() {
         totalDecimalPlaces = 1;
     }
 
-    double usedMemKibibytes = kb_main_used;
-    double usedMemBytes = usedMemKibibytes * 1024;
-    double usedMemMebibytes = usedMemKibibytes / 1024;
+    double usedMemMebibytes = kb_main_used / 1024;
     double usedMemGibibytes = usedMemMebibytes / 1000;
 
     std::string usedSuffix;
     int usedDecimalPlaces;
     double finalUsedNumber;
 
-    if (usedMemKibibytes == 0) {
+    if (kb_main_used == 0) {
         usedSuffix = "B";
-        finalUsedNumber = usedMemBytes;
+        finalUsedNumber = kb_main_used * 1024;
         usedDecimalPlaces = 0;
     } else if (usedMemMebibytes == 0) {
         usedSuffix = "K";
-        finalUsedNumber = usedMemKibibytes;
+        finalUsedNumber = kb_main_used;
         usedDecimalPlaces = 0;
     } else if (usedMemGibibytes == 0) {
         usedSuffix = "M";
@@ -206,8 +202,8 @@ int main() {
         } else if (currentString == "kernel") {
             std::cout << bold(yellow(getSymbol("  ", "kernel "))) << std::string(un.sysname) + " " + std::string(un.release) << std::endl;
         } else if (currentString == "uptime") {
-            struct sysinfo sysInfo;
-            sysinfo(&sysInfo);
+            struct sysinfo* sysInfo;
+            sysinfo(sysInfo);
             std::cout << bold(green(getSymbol("  ", "uptime "))) << getUptime(sysInfo) << std::endl;
         } else if (currentString == "shell") {
             std::cout << bold(cyan(getSymbol("  ", "shell  "))) << getShell(pw) << std::endl;
