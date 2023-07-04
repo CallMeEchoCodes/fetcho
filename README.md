@@ -65,9 +65,13 @@ It is a string that contains a list of modules seperated by a space. The modules
 
 `editor`
 
+`host`
+
+`arch`
+
 **Default**:
 ```bash
-export FO_MODULES="os kernel uptime shell ram de editor"
+export FO_MODULES="os kernel uptime shell ram de editor host arch"
 ```
 
 ### `FO_NERDFONTS`

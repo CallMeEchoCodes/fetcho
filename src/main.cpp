@@ -158,6 +158,25 @@ std::string getMemory() {
     return stringStream.str();
 }
 
+std::string getHost() {
+    std::ifstream productNameFile;
+    std::string productName;
+    std::ifstream productVersionFile;
+    std::string productVersion;
+
+    productNameFile.open("/sys/devices/virtual/dmi/id/product_name");
+    if (!productNameFile.is_open()) return "Unknown";
+    std::getline(productNameFile, productName);
+    productNameFile.close();
+
+    productVersionFile.open("/sys/devices/virtual/dmi/id/product_version");
+    if (!productVersionFile.is_open()) return "Unknown";
+    std::getline(productVersionFile, productVersion);
+    productVersionFile.close();
+
+    return productName + " " + productVersion;
+}
+
 std::string makeLine(std::string text) {
     std::string line = "";
     char* lineTextEnvVar = getenv("FO_LINETEXT");
@@ -172,7 +191,7 @@ std::string makeLine(std::string text) {
 std::vector<std::string> getOptions() {
     char* modulesEnvVar = getenv("FO_MODULES");
 
-    if (!modulesEnvVar) return {"os", "kernel", "uptime", "shell", "ram", "de", "editor"};
+    if (!modulesEnvVar) return {"os", "kernel", "uptime", "shell", "ram", "de", "editor", "host", "arch"};
 
     std::stringstream stream;
     stream << modulesEnvVar;
@@ -246,6 +265,10 @@ int main() {
             std::cout << bold(ansi(getSymbol("  ", "de     "), colorCode)) << getDesktopEnvironment() << std::endl;
         } else if (currentString == "editor") {
             std::cout << bold(ansi(getSymbol("  ", "editor "), colorCode)) << getEditor() << std::endl;
+        } else if (currentString == "host") {
+            std::cout << bold(ansi(getSymbol("󰍹  ", "host   "), colorCode)) << getHost() << std::endl;
+        } else if (currentString == "arch") {
+            std::cout << bold(ansi(getSymbol("  ", "arch   "), colorCode)) << un.machine << std::endl;
         } else {
             std::cerr << ansi("\"", 91) << ansi(currentString, 91) << ansi("\"", 91) << ansi(" is not a valid module!", 91) << std::endl;
             return EXIT_FAILURE;
