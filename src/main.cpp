@@ -14,12 +14,7 @@
 
 #define bold(str) (std::string("\e[1m") + str + "\e[22m")
 
-#define red(str) (std::string("\e[91m") + str + "\e[0m")
-#define yellow(str) (std::string("\e[93m") + str + "\e[0m")
-#define green(str) (std::string("\e[92m") + str + "\e[0m")
-#define cyan(str) (std::string("\e[96m") + str + "\e[0m")
-#define blue(str) (std::string("\e[34m") + str + "\e[0m")
-#define magenta(str) (std::string("\e[95m") + str + "\e[0m")
+#define ansi(str, code) (std::string("\e[") + std::to_string(code) + "m" + str + "\e[0m")
 
 std::string getSymbol(std::string symbol, std::string altText) {
     std::string nerdFontEnvVar = getenv("FO_NERDFONTS") ? getenv("FO_NERDFONTS") : "";
@@ -87,6 +82,19 @@ std::string getDesktopEnvironment() {
         return "None";
     } else {
         return "Unknown";
+    }
+}
+
+std::string getEditor() {
+    std::string editor = std::getenv("EDITOR") ? std::getenv("EDITOR") : "";
+    std::string visual = std::getenv("VISUAL") ? std::getenv("VISUAL") : "";
+
+    if (!editor.empty()) {
+        return editor;
+    } else if (!visual.empty()) {
+        return visual;
+    } else {
+        return "None";
     }
 }
 
@@ -164,7 +172,7 @@ std::string makeLine(std::string text) {
 std::vector<std::string> getOptions() {
     char* modulesEnvVar = getenv("FO_MODULES");
 
-    if (!modulesEnvVar) return {"os", "kernel", "uptime", "shell", "ram", "de"};
+    if (!modulesEnvVar) return {"os", "kernel", "uptime", "shell", "ram", "de", "editor"};
 
     std::stringstream stream;
     stream << modulesEnvVar;
@@ -189,29 +197,57 @@ int main() {
 
     std::string hostname = un.nodename;
     std::string username = pw->pw_name;
-    std::string userInfo = bold(magenta(username)) + bold(green("@")) + bold(magenta(hostname));
+    std::string userInfo = bold(ansi(username, 95)) + bold(ansi("@", 92)) + bold(ansi(hostname, 95));
     std::cout << userInfo << std::endl;
     std::cout << bold(makeLine(username + "@" + hostname)) << std::endl;
 
-    for (long unsigned int i = 0; i < optionsVector.size(); i++) {
+    for (size_t i = 0; i < optionsVector.size(); i++) {
         std::string currentString = optionsVector[i];
+        size_t colorIndex = i % 6;
+        int colorCode = 0;
+
+        switch (colorIndex) {
+            case 0:
+                colorCode = 91;
+                break;
+            case 1:
+                colorCode = 93;
+                break;
+            case 2:
+                colorCode = 92;
+                break;
+            case 3:
+                colorCode = 96;
+                break;
+            case 4:
+                colorCode = 94;
+                break;
+            case 5:
+                colorCode = 95;
+                break;
+
+            default:
+                break;
+        }
 
         if (currentString == "os") {
-            std::cout << bold(red(getSymbol("  ", "os     "))) << getDistro() << std::endl;
+            std::cout << bold(ansi(getSymbol("  ", "os     "), colorCode)) << getDistro() << std::endl;
         } else if (currentString == "kernel") {
-            std::cout << bold(yellow(getSymbol("  ", "kernel "))) << std::string(un.sysname) + " " + std::string(un.release) << std::endl;
+            std::cout << bold(ansi(getSymbol("  ", "kernel "), colorCode)) << std::string(un.sysname) + " " + std::string(un.release) << std::endl;
         } else if (currentString == "uptime") {
             struct sysinfo sysInfo;
             sysinfo(&sysInfo);
-            std::cout << bold(green(getSymbol("  ", "uptime "))) << getUptime(sysInfo) << std::endl;
+            std::cout << bold(ansi(getSymbol("  ", "uptime "), colorCode)) << getUptime(sysInfo) << std::endl;
         } else if (currentString == "shell") {
-            std::cout << bold(cyan(getSymbol("  ", "shell  "))) << getShell(pw) << std::endl;
+            std::cout << bold(ansi(getSymbol("  ", "shell  "), colorCode)) << getShell(pw) << std::endl;
         } else if (currentString == "ram") {
-            std::cout << bold(blue(getSymbol("  ", "ram    "))) << getMemory() << std::endl;
+            std::cout << bold(ansi(getSymbol("  ", "ram    "), colorCode)) << getMemory() << std::endl;
         } else if (currentString == "de") {
-            std::cout << bold(magenta(getSymbol("  ", "de     "))) << getDesktopEnvironment() << std::endl;
+            std::cout << bold(ansi(getSymbol("  ", "de     "), colorCode)) << getDesktopEnvironment() << std::endl;
+        } else if (currentString == "editor") {
+            std::cout << bold(ansi(getSymbol("  ", "editor "), colorCode)) << getEditor() << std::endl;
         } else {
-            std::cerr << red("\"") << red(currentString) << red("\"") << red(" is not a valid module!") << std::endl;
+            std::cerr << ansi("\"", 91) << ansi(currentString, 91) << ansi("\"", 91) << ansi(" is not a valid module!", 91) << std::endl;
             return EXIT_FAILURE;
         }
     }
