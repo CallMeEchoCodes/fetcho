@@ -1,0 +1,11 @@
+Package: fetcho
+Name: palera1n
+Version: @DEB_VERSION@
+Architecture: @DEB_ARCH@
+Maintainer: CallMeEcho
+Author: CallMeEcho
+Depends: libprocps-dev
+Section: Utilities
+Priority: optional
+Homepage: https://github.com/CallMeEchoCodes/fetcho
+Description: A simple fetch made in C++
