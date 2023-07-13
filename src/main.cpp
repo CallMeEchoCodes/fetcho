@@ -57,7 +57,7 @@ std::string getDistro() {
 }
 
 std::string getUptime(struct sysinfo sysInfo) {
-    unsigned int uptime = sysInfo.uptime;
+    __kernel_long_t uptime = sysInfo.uptime;
     if (uptime < 60) return std::to_string(uptime) + "s";
     if (uptime / 3600 == 0) return std::to_string(uptime % 3600 / 60) + "m";
     return std::to_string(uptime / 3600) + "h " + std::to_string(uptime % 3600 / 60) + "m";
@@ -101,10 +101,7 @@ std::string getEditor() {
 std::string getMemory() {
     meminfo();
     double totalMemMebibytes = kb_main_total / 1024;
-
-    // This should be 1024. But when i do that it outputs the incorrect value.
-    // Maybe im just stupid but if someone can explain why this outputs the correct number of GIBIBytes then lmk
-    double totalMemGibibytes = totalMemMebibytes / 1000;
+    double totalMemGibibytes = totalMemMebibytes / 1024;
 
     std::string totalSuffix;
     int totalDecimalPlaces;
@@ -129,7 +126,7 @@ std::string getMemory() {
     }
 
     double usedMemMebibytes = kb_main_used / 1024;
-    double usedMemGibibytes = usedMemMebibytes / 1000;
+    double usedMemGibibytes = usedMemMebibytes / 1024;
 
     std::string usedSuffix;
     int usedDecimalPlaces;
