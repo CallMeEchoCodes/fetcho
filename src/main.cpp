@@ -12,8 +12,6 @@
 #include <string>
 #include <vector>
 
-#define bold(str) (std::string("\e[1m") + str + "\e[22m")
-
 #define ansi(str, code) (std::string("\e[") + std::to_string(code) + "m" + str + "\e[0m")
 
 std::string getSymbol(std::string symbol, std::string altText) {
@@ -213,9 +211,9 @@ int main() {
 
     std::string hostname = un.nodename;
     std::string username = pw->pw_name;
-    std::string userInfo = bold(ansi(username, 95)) + bold(ansi("@", 92)) + bold(ansi(hostname, 95));
+    std::string userInfo = ansi((ansi(username, 95)) + ansi(ansi("@", 92), 1) + ansi(ansi(hostname, 95), 1), 1);
     std::cout << userInfo << std::endl;
-    std::cout << bold(makeLine(username + "@" + hostname)) << std::endl;
+    std::cout << ansi(makeLine(username + "@" + hostname), 1) << std::endl;
 
     for (size_t i = 0; i < optionsVector.size(); i++) {
         std::string currentString = optionsVector[i];
@@ -247,25 +245,25 @@ int main() {
         }
 
         if (currentString == "os") {
-            std::cout << bold(ansi(getSymbol("  ", "os     "), colorCode)) << getDistro() << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "os     "), colorCode), 1) << getDistro() << std::endl;
         } else if (currentString == "kernel") {
-            std::cout << bold(ansi(getSymbol("  ", "kernel "), colorCode)) << std::string(un.sysname) + " " + std::string(un.release) << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "kernel "), colorCode), 1) << std::string(un.sysname) + " " + std::string(un.release) << std::endl;
         } else if (currentString == "uptime") {
             struct sysinfo sysInfo;
             sysinfo(&sysInfo);
-            std::cout << bold(ansi(getSymbol("  ", "uptime "), colorCode)) << getUptime(sysInfo) << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "uptime "), colorCode), 1) << getUptime(sysInfo) << std::endl;
         } else if (currentString == "shell") {
-            std::cout << bold(ansi(getSymbol("  ", "shell  "), colorCode)) << getShell(pw) << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "shell  "), colorCode), 1) << getShell(pw) << std::endl;
         } else if (currentString == "ram") {
-            std::cout << bold(ansi(getSymbol("  ", "ram    "), colorCode)) << getMemory() << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "ram    "), colorCode), 1) << getMemory() << std::endl;
         } else if (currentString == "de") {
-            std::cout << bold(ansi(getSymbol("  ", "de     "), colorCode)) << getDesktopEnvironment() << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "de     "), colorCode), 1) << getDesktopEnvironment() << std::endl;
         } else if (currentString == "editor") {
-            std::cout << bold(ansi(getSymbol("  ", "editor "), colorCode)) << getEditor() << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "editor "), colorCode), 1) << getEditor() << std::endl;
         } else if (currentString == "host") {
-            std::cout << bold(ansi(getSymbol("󰍹  ", "host   "), colorCode)) << getHost() << std::endl;
+            std::cout << ansi(ansi(getSymbol("󰍹  ", "host   "), colorCode), 1) << getHost() << std::endl;
         } else if (currentString == "arch") {
-            std::cout << bold(ansi(getSymbol("  ", "arch   "), colorCode)) << un.machine << std::endl;
+            std::cout << ansi(ansi(getSymbol("  ", "arch   "), colorCode), 1) << un.machine << std::endl;
         } else {
             std::cerr << ansi("\"", 91) << ansi(currentString, 91) << ansi("\"", 91) << ansi(" is not a valid module!", 91) << std::endl;
             return EXIT_FAILURE;
